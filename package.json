@@ -1,0 +1,18 @@
+{
+  "name": "atom-gitlab",
+  "main": "./lib/atom-gitlab",
+  "version": "0.0.0",
+  "description": "A short description of your package",
+  "keywords": [
+  ],
+  "activationCommands": {
+    "atom-workspace": "atom-gitlab:toggle"
+  },
+  "repository": "https://github.com/atom/atom-gitlab",
+  "license": "MIT",
+  "engines": {
+    "atom": ">=1.0.0 <2.0.0"
+  },
+  "dependencies": {
+  }
+}
