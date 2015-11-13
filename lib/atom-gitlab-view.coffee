@@ -1,22 +1,20 @@
+{Range, CompositeDisposable}  = require 'atom'
+{View, $, $$} = require 'atom-space-pen-views'
+AtomGitlabViewList = require './atom-gitlab-view-list'
+AtomGitlabViewDetail = require './atom-gitlab-view-detail'
+Gitlab = require './gitlab'
+
 module.exports =
-class AtomGitlabView
-  constructor: (serializedState) ->
-    # Create root element
-    @element = document.createElement('div')
-    @element.classList.add('atom-gitlab')
+class AtomGitlabView extends View
+  @content: ->
+    detailView = new AtomGitlabViewDetail()
+    listView = new AtomGitlabViewList(detailView)
 
-    # Create message element
-    message = document.createElement('div')
-    message.textContent = "The AtomGitlab package is Alive! It's ALIVE!"
-    message.classList.add('message')
-    @element.appendChild(message)
+    @div class: 'gitlab', =>
+      @div class: 'list-view', =>
+        @subview 'listView', listView
+      @div class: 'detail-view', =>
+        @subview 'detailView', detailView
 
-  # Returns an object that can be retrieved when package is activated
-  serialize: ->
-
-  # Tear down any state and detach
-  destroy: ->
-    @element.remove()
-
-  getElement: ->
-    @element
+  getTitle: ->
+    'Gitlab'

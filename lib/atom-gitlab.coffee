@@ -1,25 +1,44 @@
 AtomGitlabView = require './atom-gitlab-view'
 {CompositeDisposable} = require 'atom'
+CMD_TOGGLE = 'atom-gitlab:toggle'
+
+views = []
+view = undefined
+pane = undefined
+item = undefined
 
 module.exports = AtomGitlab =
   atomGitlabView: null
-  modalPanel: null
   subscriptions: null
+  config:
+    gitlabUrl:
+      type: 'string'
+      default: 'http://gitlab.com'
+    gitlabToken:
+      type: 'string'
+      default: ''
 
   activate: (state) ->
-    @atomGitlabView = new AtomGitlabView(state.atomGitlabViewState)
-    @modalPanel = atom.workspace.addModalPanel(item: @atomGitlabView.getElement(), visible: false)
+    console.log 'Atom Gitlab: activate'
+    atom.commands.add 'atom-workspace', CMD_TOGGLE, => @toggleView()
+    atom.workspace.onDidChangeActivePaneItem (item) => @updateViews()
+    return
 
-    # Events subscribed to in atom's system can be easily cleaned up with a CompositeDisposable
-    @subscriptions = new CompositeDisposable
-
-    # Register command that toggles this view
-    @subscriptions.add atom.commands.add 'atom-workspace', 'atom-gitlab:toggle': => @toggle()
+  toggleView: ->
+    if !@atomGitlabView
+      @atomGitlabView = new AtomGitlabView()
+      pane = atom.workspace.getActivePane()
+      item = pane.addItem @atomGitlabView, 0
+      pane.activateItem item
 
   deactivate: ->
-    @modalPanel.destroy()
-    @subscriptions.dispose()
-    @atomGitlabView.destroy()
+    return
+
+  updateViews: ->
+    activeView = atom.workspace.getActivePane().getActiveItem()
+    for v in views when v is activeView
+      v.update()
+    return
 
   serialize: ->
     atomGitlabViewState: @atomGitlabView.serialize()
